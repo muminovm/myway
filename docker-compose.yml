@@ -1,10 +1,38 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
-    image: myway-app:latest
-    container_name: sysadmin_api
-    ports:
-      - "8000:8000"
+  snipeit-db:
+    image: mysql:8.0
+    container_name: snipeit-db
+    environment:
+      MYSQL_DATABASE: 'snipeit'
+      MYSQL_USER: 'snipeit'
+      MYSQL_PASSWORD: 'SecretPassword123'
+      MYSQL_ROOT_PASSWORD: 'RootPassword123'
+    volumes:
+      - snipeit-db-data:/var/lib/mysql
     restart: always
+
+  snipeit:
+    image: snipe/snipe-it:latest
+    container_name: snipeit
+    ports:
+      - "8080:80"
+    environment:
+      APP_URL: "http://localhost:8080"
+      APP_KEY: "base64:c29tZXJhbmRvbXN0cmluZ3RoYXRpczMyYnl0ZXNsb25n="
+      APP_TIMEZONE: "UTC"
+      APP_LOCALE: "ru-RU"
+      DB_HOST: "snipeit-db"
+      DB_DATABASE: "snipeit"
+      DB_USERNAME: "snipeit"
+      DB_PASSWORD: "SecretPassword123"
+    depends_on:
+      - snipeit-db
+    volumes:
+      - snipeit-data:/var/lib/snipeit
+    restart: always
+
+volumes:
+  snipeit-db-data:
+  snipeit-data:
