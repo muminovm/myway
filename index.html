@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SysAdmin Command Center</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --accent: #38bdf8;
+            --green: #4ade80;
+            --border: #334155;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 30px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .status {
+            background-color: #14532d;
+            color: var(--green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+        code {
+            background-color: #090d16;
+            color: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            display: block;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛠️ SysAdmin Dashboard</h1>
+        <div class="status">● Server Online (CI/CD Deployed)</div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>🐳 Docker Cheat Sheet</h3>
+            <p>Запущенные контейнеры:</p>
+            <code>docker ps -a</code>
+            <p>Просмотр логов:</p>
+            <code>docker logs -f [container_id]</code>
+        </div>
+
+        <div class="card">
+            <h3>🌐 Network Commands</h3>
+            <p>Проверка портов:</p>
+            <code>ss -tulpn</code>
+            <p>Мониторинг соединений:</p>
+            <code>netstat -tulnp</code>
+        </div>
+
+        <div class="card">
+            <h3>📊 System Resources</h3>
+            <p>Использование дисков:</p>
+            <code>df -h</code>
+            <p>Загрузка ОЗУ и CPU:</p>
+            <code>htop</code>
+        </div>
+    </div>
+</body>
+</html>
