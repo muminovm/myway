@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    image: myway-app:latest
+    container_name: sysadmin_api
+    ports:
+      - "8000:8000"
+    restart: always
