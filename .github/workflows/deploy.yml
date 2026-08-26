@@ -1,0 +1,22 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Скачивание кода из Git
+        uses: actions/checkout@v4
+
+      - name: Сборка Docker-образа
+        run: docker build -t myway-app:latest .
+
+      - name: Остановка старого контейнера
+        run: docker stop myway-container || true && docker rm myway-container || true
+
+      - name: Запуск обновленного контейнера
+        run: docker run -d --name myway-container -p 8080:80 myway-app:latest
