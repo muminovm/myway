@@ -3,95 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SysAdmin Command Center</title>
+    <title>Printer Network Monitor</title>
     <style>
-        :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-            --accent: #38bdf8;
-            --green: #4ade80;
-            --border: #334155;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 30px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-        .status {
-            background-color: #14532d;
-            color: var(--green);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-        }
-        .card h3 {
-            margin-top: 0;
-            color: var(--accent);
-        }
-        code {
-            background-color: #090d16;
-            color: #f1f5f9;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-family: monospace;
-            display: block;
-            margin: 8px 0;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 30px; margin: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #334155; padding-bottom: 15px; margin-bottom: 25px; }
+        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 10px 18px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        .btn:hover { background: #0284c7; color: white; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .ip { font-family: monospace; font-size: 1.1em; font-weight: bold; }
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; text-transform: uppercase; }
+        .online { background: #14532d; color: #4ade80; border: 1px solid #22c55e; }
+        .offline { background: #451a1a; color: #f87171; border: 1px solid #ef4444; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🛠️ SysAdmin Dashboard</h1>
-        <div class="status">● Server Online (CI/CD Deployed)</div>
+        <h1>🖨️ Мониторинг принтеров (192.168.198.x)</h1>
+        <button class="btn" onclick="scanNetwork()">🔄 Сканировать сеть</button>
     </div>
 
-    <div class="grid">
-        <div class="card">
-            <h3>🐳 Docker Cheat Sheet</h3>
-            <p>Запущенные контейнеры:</p>
-            <code>docker ps -a</code>
-            <p>Просмотр логов:</p>
-            <code>docker logs -f [container_id]</code>
-        </div>
+    <div id="loader" style="color: #38bdf8; margin-bottom: 15px;">Загрузка данных...</div>
+    <div class="grid" id="printer-grid"></div>
 
-        <div class="card">
-            <h3>🌐 Network Commands</h3>
-            <p>Проверка портов:</p>
-            <code>ss -tulpn</code>
-            <p>Мониторинг соединений:</p>
-            <code>netstat -tulnp</code>
-        </div>
+    <script>
+        async function scanNetwork() {
+            const loader = document.getElementById('loader');
+            const grid = document.getElementById('printer-grid');
+            loader.innerText = "Сканирование подсети 192.168.198.0/24...";
+            
+            try {
+                const res = await fetch('/api/printers');
+                const data = await res.json();
+                grid.innerHTML = '';
+                
+                data.devices.forEach(dev => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <span class="ip">${dev.ip}</span>
+                        <span class="badge ${dev.status}">${dev.status}</span>
+                    `;
+                    grid.appendChild(card);
+                });
+                loader.innerText = `Последнее обновление: ${new Date().toLocaleTimeString()}`;
+            } catch (err) {
+                loader.innerText = "Ошибка при загрузке данных!";
+            }
+        }
 
-        <div class="card">
-            <h3>📊 System Resources</h3>
-            <p>Использование дисков:</p>
-            <code>df -h</code>
-            <p>Загрузка ОЗУ и CPU:</p>
-            <code>htop</code>
-        </div>
-    </div>
+        // Авто-сканирование при старте и каждые 30 секунд
+        scanNetwork();
+        setInterval(scanNetwork, 30000);
+    </script>
 </body>
 </html>
