@@ -19,4 +19,4 @@ jobs:
         run: docker stop myway-container || true && docker rm myway-container || true
 
       - name: Запуск обновленного контейнера
-        run: docker run -d --name myway-container -p 8080:80 myway-app:latest
+        run: docker run -d --name myway-container -p 8000:8000 myway-app:latest
